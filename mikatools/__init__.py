@@ -1,5 +1,6 @@
 #encoding: utf-8
 import json, codecs, pickle, requests, os, sys
+from clint.textui import progress
 
 try:
     # For Python 3.0 and later
@@ -33,11 +34,24 @@ def download_json(url, args={}):
 	r = requests.get(url, **args)
 	return r.json()
 
-def download_file(url, path):
-	file = urlopen(url)
-	with open(path ,'wb') as output:
-		output.write(file.read())
-	output.close()
+def download_file(url, path, show_progress=False):
+	if show_progress:
+		__download_file_with_bar(url, path)
+	else:
+		file = urlopen(url)
+		with open(path ,'wb') as output:
+			output.write(file.read())
+		output.close()
+
+
+def __download_file_with_bar(url, path):
+	r = requests.get(url, stream=True)
+	with open(path, 'wb') as f:
+		total_length = int(r.headers.get('content-length'))
+		for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1): 
+			if chunk:
+				f.write(chunk)
+				f.flush()
 
 def ensure_unicode(func):
 	def wrapper(*args, **kwargs):

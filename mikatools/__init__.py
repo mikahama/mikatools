@@ -1,6 +1,16 @@
 #encoding: utf-8
 import json, codecs, pickle, requests, os, sys
 from clint.textui import progress
+try:
+	#python 3
+	from queue import Queue
+except ImportError:
+	#python2
+	from Queue import Queue
+from threading import Thread
+import os.path
+from multiprocessing import Process
+from multiprocessing import JoinableQueue
 
 try:
     # For Python 3.0 and later
@@ -9,13 +19,20 @@ except ImportError:
     # Fall back to Python 2's urllib2
     from urllib2 import urlopen
 
+
+def file_exists(file, accept_directories=False):
+	if not accept_directories:
+		return os.path.isfile(file)
+	else:
+		return os.path.exists(file)
+
 def script_path():
 	return os.path.dirname(os.path.abspath(sys._getframe().f_back.f_globals["__file__"]))
 
 def pickle_dump(data, file_path):
 	pickle.dump(data, open(file_path, "wb"))
 
-def pickle_load(data, file_path):
+def pickle_load(file_path):
 	return pickle.load(open(file_path, "rb"))
 
 def json_dump(data, file_path, sort_keys=True):
@@ -69,6 +86,8 @@ def ensure_ascii(func):
 		return text
 	return wrapper
 
+
+
 class SafeDict(dict):
 	def __init__(self, empty_type, init_params={}, *args, **kw):
 		self.empty_type = empty_type
@@ -82,3 +101,43 @@ class SafeDict(dict):
 
 	def __give_empty__(self):
 		return self.empty_type(**self.init_params)
+
+
+		
+
+class WorkerRunner():
+	def __init__(self, function, kwarg_list, number_of_workers=4, run_as_threads=False):
+		self.function = function
+		if run_as_threads:
+			self.runner = Thread
+			self.q = Queue()
+		else:
+			self.runner = Process
+			self.q = JoinableQueue()
+
+		for kwarg in kwarg_list:
+			self.q.put(kwarg)
+		self.number_of_workers = number_of_workers
+		self.threads = []
+
+
+	def _function_wrapper(self, q):
+		while not q.empty():
+			kwargs = q.get()
+			self.function(**kwargs)
+			q.task_done()
+
+
+	def start(self, join=True):
+		for i in range(self.number_of_workers):
+			worker = self.runner(target=self._function_wrapper, args=(self.q,))
+			worker.daemon = True
+			worker.start()
+		if join:
+			self.q.join()
+		else:
+			return self.q
+
+
+
+

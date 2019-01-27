@@ -1,4 +1,18 @@
 #encoding: utf-8
-import mikatools
+from mikatools import *
+import random
 
-mikatools.download_file("https://zenodo.org/record/1454650/files/semkpv.db?download=1", "kpv.db", True)
+def counter(max):
+	random.seed()
+	w = open_write(str(random.randint(1,101)) + "_tmp.txt")
+	for i in range(max):
+		w.write(str(i) + "\n")
+	w.close()
+
+
+jobs = [{"max":10000},{"max":10000},{"max":10000},{"max":10000},{"max":10000},{"max":10000}]
+
+t = WorkerRunner(counter, jobs, 2)
+t.start()
+print("all done")
+

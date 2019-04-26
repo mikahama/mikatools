@@ -1,4 +1,4 @@
-from mikatools import pickle_dump, pickle_load
+from mikatools import pickle_dump, pickle_load, file_exists
 
 _cache_dict = {}
 
@@ -7,7 +7,9 @@ def clear_cache():
 	_cache_dict = {}
 
 class cache(object):
-	"""docstring for cache"""
+	"""
+	docstring for cache
+	"""
 	def __init__(self, file_path, refresh=False, use_ram=False, indentify_by_args=False, indentify_by_kwargs=False):
 		self.file_path = file_path
 		self.refresh = refresh
@@ -28,14 +30,14 @@ class cache(object):
 
 	def __call__(self, f):
 		def wrapper(*args, **kwargs):
-			file_path = _resolve_filename(args, kwargs)
+			file_path = self._resolve_filename(args, kwargs)
 			if self.use_ram and not self.refresh and file_path in _cache_dict:
 				return _cache_dict[file_path]
 			elif not self.use_ram and not self.refresh and file_exists(file_path):
 				return pickle_load(file_path)
 			else:
 				d = f(*args, **kwargs)
-				if use_ram:
+				if self.use_ram:
 					_cache_dict[file_path] = d
 				else:
 					pickle_dump(d, file_path)

@@ -86,7 +86,7 @@ def print_json_help(json_dictionary, indent=0, indent_char="  "):
 	:type indent_char: string
 	"""
 	tabs = indent_char*indent
-	for key, value in json_dictionary.iteritems():
+	for key, value in json_dictionary.items():
 		print(tabs +"- " + key + ":")
 		if type(value) is dict:
 			print_json_help(value, indent=indent+1, indent_char=indent_char)

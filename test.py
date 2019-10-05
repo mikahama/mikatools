@@ -17,6 +17,6 @@ t = WorkerRunner(counter, jobs, 2)
 t.start()
 print("all done")
 """
-data = {"hats":{"paper": 2, "funny": 4}, "owners ages": [4,5,8], "true":"yeah", "very":{"deep":{"dict":2}}}
+#data = {"hats":{"paper": 2, "funny": 4}, "owners ages": [4,5,8], "true":"yeah", "very":{"deep":{"dict":2}}}
 
-print_json_help(data)
+#print_json_help(data)

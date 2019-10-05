@@ -177,6 +177,7 @@ def __download_file_with_bar(url, path):
 		print("No content-length, cannot show progress for download")
 		r = None
 		download_file(url, path, False)
+		return
 	with open(path, 'wb') as f:
 		total_length = int(leng)
 		for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1): 

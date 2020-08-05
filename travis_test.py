@@ -8,9 +8,11 @@ class TestFSTS(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_lemmatize(self):
-        result = uralicApi.lemmatize("lehmäni", "fin",force_local=True)
-        self.assertEqual(result[0], 'lehmä')
+    def test_json(self):
+        result = {"äfdfer" : "009id"}
+        json_dump(result, "test.json")
+        d = json_load("test.json")
+        self.assertEqual(result["äfdfer"], d["äfdfer"])
 
 
 if __name__ == '__main__':

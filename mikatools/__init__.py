@@ -105,7 +105,8 @@ def json_dump(data, file_path, sort_keys=True):
 	:type file_path: string
 	:type sort_keys: bool
 	"""
-	json.dump(data, codecs.open(file_path, "w", encoding="utf-8"),indent=4, sort_keys=sort_keys, ensure_ascii=False)
+	with codecs.open(file_path, "w", encoding="utf-8") as file_handle:
+		json.dump(data, file_handle ,indent=4, sort_keys=sort_keys, ensure_ascii=False)
 
 def json_load(file_path, default_dictionary=None):
 	"""
@@ -116,13 +117,15 @@ def json_load(file_path, default_dictionary=None):
 	:rtype: dict
 	:return: The JSON dictionary
 	"""
-	if default_dictionary is not None:
-		try:
-			return json.load(codecs.open(file_path, "r", encoding="utf-8"))
-		except:
-			return default_dictionary
-	else:
-		return json.load(codecs.open(file_path, "r", encoding="utf-8"))
+	with codecs.open(file_path, "r", encoding="utf-8") as file_handle:
+		if default_dictionary is not None:
+			try:
+				return json.load(file_handle)
+			except:
+				return default_dictionary
+		else:
+			return json.load(file_handle)
+
 
 def open_read(file_path):
 	"""

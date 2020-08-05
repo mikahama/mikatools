@@ -18,7 +18,7 @@ def make_mt_valid(file1, file2, sample_len=5000):
 	if len(sources) > sample_len:
 		valids = random.sample(range(len(sources)), sample_len)
 	else:
-		valids = random.sample(range(len(sources)), len(sources)/2)
+		valids = random.sample(range(len(sources)), int(len(sources)/2))
 	for valid in valids:
 		source_valid.write(sources[valid] + "\n")
 		target_valid.write(targets[valid] + "\n")

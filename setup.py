@@ -11,7 +11,7 @@ setuptools.setup(
     author_email="mika.hamalainen@helsinki.fi",
     description="Quick methods for every day Python programming",
     long_description=long_description,
-    install_requires=['requests', "clint"],
+    install_requires=['requests', "clint", "cryptography"],
     long_description_content_type="text/markdown",
     url="https://github.com/mikahama/mikatools",
     packages=setuptools.find_packages(),

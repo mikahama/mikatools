@@ -20,3 +20,21 @@ print("all done")
 #data = {"hats":{"paper": 2, "funny": 4}, "owners ages": [4,5,8], "true":"yeah", "very":{"deep":{"dict":2}}}
 
 #print_json_help(data)
+
+"""
+text = "salainen viestini\nsala_sala"
+o = open_write("secret.txt", password="super", salt="secret")
+o.write(text,line_breaks=False)
+o.write(text)
+o.close()
+
+
+i = open_read("secret.txt", password="super", salt="secret")
+for x in i:
+	print("line read:")
+	print(x)
+"""
+
+secret_data = {"Росси́я":"العربية"}
+json_dump(secret_data, "secret.json", password="secret", salt="very")
+print(json_load("secret.json", password="secret", salt="very"))

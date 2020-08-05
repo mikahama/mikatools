@@ -11,6 +11,7 @@ from threading import Thread
 import os.path
 from multiprocessing import Process
 from multiprocessing import JoinableQueue
+from .crypto import CryptoReadStream, CryptoWriteStream
 
 try:
     # For Python 3.0 and later
@@ -95,7 +96,7 @@ def print_json_help(json_dictionary, indent=0, indent_char="  "):
 		else:
 			print(tabs + indent_char + str(value))
 
-def json_dump(data, file_path, sort_keys=True):
+def json_dump(data, file_path, sort_keys=True,  allow_overwrite=True, append=False, password=None, salt=""):
 	"""
 	Dumps a dictionary into JSON always in UTF-8 encoding and outputting the letters as they are (no ugly escaping)
 	:param data: The dictionary to be dumped
@@ -105,10 +106,10 @@ def json_dump(data, file_path, sort_keys=True):
 	:type file_path: string
 	:type sort_keys: bool
 	"""
-	with codecs.open(file_path, "w", encoding="utf-8") as file_handle:
+	with open_write(file_path, password=password, salt=salt, allow_overwrite=allow_overwrite, append=append) as file_handle:
 		json.dump(data, file_handle ,indent=4, sort_keys=sort_keys, ensure_ascii=False)
 
-def json_load(file_path, default_dictionary=None):
+def json_load(file_path, default_dictionary=None, password=None, salt =""):
 	"""
 	Loads an UTF-8 encoded JSON
 	:param file_path: Path to the JSON file
@@ -117,7 +118,7 @@ def json_load(file_path, default_dictionary=None):
 	:rtype: dict
 	:return: The JSON dictionary
 	"""
-	with codecs.open(file_path, "r", encoding="utf-8") as file_handle:
+	with open_read(file_path, password=password, salt=salt) as file_handle:
 		if default_dictionary is not None:
 			try:
 				return json.load(file_handle)
@@ -127,7 +128,7 @@ def json_load(file_path, default_dictionary=None):
 			return json.load(file_handle)
 
 
-def open_read(file_path):
+def open_read(file_path, password=None, salt=""):
 	"""
 	Opens a file for reading in UTF-8
 	:rtype: file
@@ -135,9 +136,11 @@ def open_read(file_path):
 	:type file_path: string
 	:return: A file opened for reading
 	"""
+	if password:
+		return CryptoReadStream(file_path, password, salt=salt)
 	return codecs.open(file_path, "r", encoding="utf-8")
 
-def open_write(file_path, allow_overwrite=True, append=False):
+def open_write(file_path, allow_overwrite=True, append=False, password=None, salt=""):
 	"""
 	Opens a file for writing in UTF-8
 	:rtype: file
@@ -150,9 +153,11 @@ def open_write(file_path, allow_overwrite=True, append=False):
 		mode = "a"
 	elif not allow_overwrite:
 		mode = "x"
+	if password:
+		return CryptoWriteStream(file_path, password, salt=salt, allow_overwrite=allow_overwrite, append=append)
 	return codecs.open(file_path, mode, encoding="utf-8")
 
-def text_dump(file_path, text, allow_overwrite=True, append=False):
+def text_dump(file_path, text, allow_overwrite=True, append=False, password=None, salt=""):
 	"""
 	Opens a file for writing in UTF-8, writes text and closes the file
 	:rtype: file
@@ -160,7 +165,7 @@ def text_dump(file_path, text, allow_overwrite=True, append=False):
 	:type file_path: string
 	:return: A file opened for writing
 	"""
-	f = open_write(file_path, allow_overwrite=allow_overwrite, append=append)
+	f = open_write(file_path, allow_overwrite=allow_overwrite, append=append, password=password, salt=salt)
 	f.write(text)
 	f.close()
 

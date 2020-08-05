@@ -36,5 +36,7 @@ for x in i:
 """
 
 secret_data = {"Росси́я":"العربية"}
-json_dump(secret_data, "secret.json", password="secret", salt="very")
-print(json_load("secret.json", password="secret", salt="very"))
+#json_dump(secret_data, "secret.json", password="secret", salt="very")
+#print(json_load("secret.json", password="secret", salt="very"))
+pickle_dump(secret_data, "secret.bin", password="secret", salt="very")
+print(pickle_load("secret.bin", password="secret", salt="very"))

@@ -11,7 +11,7 @@ from threading import Thread
 import os.path
 from multiprocessing import Process
 from multiprocessing import JoinableQueue
-from .crypto import CryptoReadStream, CryptoWriteStream
+from .crypto import CryptoReadStream, CryptoWriteStream, base64
 
 try:
     # For Python 3.0 and later
@@ -48,7 +48,7 @@ def script_path(join_file=None):
 	else:
 		return os.path.join(path, join_file)
 
-def pickle_dump(data, file_path):
+def pickle_dump(data, file_path, password=None, salt=""):
 	"""
 	Pickles an object into a file by path
 	:param data: an object to be pickled
@@ -56,9 +56,13 @@ def pickle_dump(data, file_path):
 	:type data: object
 	:type file_path: string
 	"""
-	pickle.dump(data, open(file_path, "wb"))
+	if password:
+		crypto_text = base64.urlsafe_b64encode(pickle.dumps(data)).decode("utf-8")
+		text_dump(file_path, crypto_text,password=password, salt=salt)
+	else:
+		pickle.dump(data, open(file_path, "wb"))
 
-def pickle_load(file_path):
+def pickle_load(file_path, password=None, salt=""):
 	"""
 	Loads a pickled object by path
 	:param file_path: Path to the file
@@ -66,7 +70,13 @@ def pickle_load(file_path):
 	:return: The loaded object
 	:rtype: object
 	"""
-	return pickle.load(open(file_path, "rb"))
+	if password:
+		f = open_read(file_path, password=password, salt=salt)
+		d = pickle.loads(base64.urlsafe_b64decode(f.read()))
+		f.close()
+		return d
+	else:
+		return pickle.load(open(file_path, "rb"))
 
 def print_json_help(json_dictionary, indent=0, indent_char="  "):
 	"""

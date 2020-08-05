@@ -107,15 +107,22 @@ def json_dump(data, file_path, sort_keys=True):
 	"""
 	json.dump(data, codecs.open(file_path, "w", encoding="utf-8"),indent=4, sort_keys=sort_keys, ensure_ascii=False)
 
-def json_load(file_path):
+def json_load(file_path, default_dictionary=None):
 	"""
 	Loads an UTF-8 encoded JSON
 	:param file_path: Path to the JSON file
+	:param default_dictionary: Dictioary to return if file is not found
 	:type file_path: string
 	:rtype: dict
 	:return: The JSON dictionary
 	"""
-	return json.load(codecs.open(file_path, "r", encoding="utf-8"))
+	if default_dictionary is not None:
+		try:
+			return json.load(codecs.open(file_path, "r", encoding="utf-8"))
+		except:
+			return default_dictionary
+	else:
+		return json.load(codecs.open(file_path, "r", encoding="utf-8"))
 
 def open_read(file_path):
 	"""
@@ -127,7 +134,7 @@ def open_read(file_path):
 	"""
 	return codecs.open(file_path, "r", encoding="utf-8")
 
-def open_write(file_path):
+def open_write(file_path, allow_overwrite=True, append=False):
 	"""
 	Opens a file for writing in UTF-8
 	:rtype: file
@@ -135,7 +142,24 @@ def open_write(file_path):
 	:type file_path: string
 	:return: A file opened for writing
 	"""
-	return codecs.open(file_path, "w", encoding="utf-8")
+	mode = "w"
+	if append:
+		mode = "a"
+	elif not allow_overwrite:
+		mode = "x"
+	return codecs.open(file_path, mode, encoding="utf-8")
+
+def text_dump(file_path, text, allow_overwrite=True, append=False):
+	"""
+	Opens a file for writing in UTF-8, writes text and closes the file
+	:rtype: file
+	:param file_path: Path to file
+	:type file_path: string
+	:return: A file opened for writing
+	"""
+	f = open_write(file_path, allow_overwrite=allow_overwrite, append=append)
+	f.write(text)
+	f.close()
 
 def download_json(url, args={}):
 	"""

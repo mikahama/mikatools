@@ -48,7 +48,7 @@ def script_path(join_file=None):
 	else:
 		return os.path.join(path, join_file)
 
-def pickle_dump(data, file_path, password=None, salt=""):
+def pickle_dump(data, file_path, password=None, salt="", key=None,key_password=None):
 	"""
 	Pickles an object into a file by path
 	:param data: an object to be pickled
@@ -56,13 +56,13 @@ def pickle_dump(data, file_path, password=None, salt=""):
 	:type data: object
 	:type file_path: string
 	"""
-	if password:
+	if password or key:
 		crypto_text = base64.urlsafe_b64encode(pickle.dumps(data)).decode("utf-8")
-		text_dump(file_path, crypto_text,password=password, salt=salt)
+		text_dump(file_path, crypto_text,password=password, salt=salt, key=key,key_password=key_password)
 	else:
 		pickle.dump(data, open(file_path, "wb"))
 
-def pickle_load(file_path, password=None, salt=""):
+def pickle_load(file_path, password=None, salt="", key=None, key_password=None):
 	"""
 	Loads a pickled object by path
 	:param file_path: Path to the file
@@ -70,8 +70,8 @@ def pickle_load(file_path, password=None, salt=""):
 	:return: The loaded object
 	:rtype: object
 	"""
-	if password:
-		f = open_read(file_path, password=password, salt=salt)
+	if password or key:
+		f = open_read(file_path, password=password, salt=salt, key=key,key_password=key_password)
 		d = pickle.loads(base64.urlsafe_b64decode(f.read()))
 		f.close()
 		return d
@@ -106,7 +106,7 @@ def print_json_help(json_dictionary, indent=0, indent_char="  "):
 		else:
 			print(tabs + indent_char + str(value))
 
-def json_dump(data, file_path, sort_keys=True,  allow_overwrite=True, append=False, password=None, salt=""):
+def json_dump(data, file_path, sort_keys=True,  allow_overwrite=True, append=False, password=None, salt="", key=None,key_password=None):
 	"""
 	Dumps a dictionary into JSON always in UTF-8 encoding and outputting the letters as they are (no ugly escaping)
 	:param data: The dictionary to be dumped
@@ -116,10 +116,10 @@ def json_dump(data, file_path, sort_keys=True,  allow_overwrite=True, append=Fal
 	:type file_path: string
 	:type sort_keys: bool
 	"""
-	with open_write(file_path, password=password, salt=salt, allow_overwrite=allow_overwrite, append=append) as file_handle:
+	with open_write(file_path, password=password, salt=salt, allow_overwrite=allow_overwrite, append=append, key = key,key_password=key_password) as file_handle:
 		json.dump(data, file_handle ,indent=4, sort_keys=sort_keys, ensure_ascii=False)
 
-def json_load(file_path, default_dictionary=None, password=None, salt =""):
+def json_load(file_path, default_dictionary=None, password=None, salt ="", key=None, key_password=None):
 	"""
 	Loads an UTF-8 encoded JSON
 	:param file_path: Path to the JSON file
@@ -128,7 +128,7 @@ def json_load(file_path, default_dictionary=None, password=None, salt =""):
 	:rtype: dict
 	:return: The JSON dictionary
 	"""
-	with open_read(file_path, password=password, salt=salt) as file_handle:
+	with open_read(file_path, password=password, salt=salt, key = key, key_password=key_password) as file_handle:
 		if default_dictionary is not None:
 			try:
 				return json.load(file_handle)
@@ -138,7 +138,7 @@ def json_load(file_path, default_dictionary=None, password=None, salt =""):
 			return json.load(file_handle)
 
 
-def open_read(file_path, password=None, salt=""):
+def open_read(file_path, password=None, salt="", key=None, key_password=None):
 	"""
 	Opens a file for reading in UTF-8
 	:rtype: file
@@ -146,11 +146,11 @@ def open_read(file_path, password=None, salt=""):
 	:type file_path: string
 	:return: A file opened for reading
 	"""
-	if password:
-		return CryptoReadStream(file_path, password, salt=salt)
+	if password or key:
+		return CryptoReadStream(file_path, password, salt=salt, key=key, key_password=key_password)
 	return codecs.open(file_path, "r", encoding="utf-8")
 
-def open_write(file_path, allow_overwrite=True, append=False, password=None, salt=""):
+def open_write(file_path, allow_overwrite=True, append=False, password=None, salt="", key=None, key_password=None):
 	"""
 	Opens a file for writing in UTF-8
 	:rtype: file
@@ -163,11 +163,11 @@ def open_write(file_path, allow_overwrite=True, append=False, password=None, sal
 		mode = "a"
 	elif not allow_overwrite:
 		mode = "x"
-	if password:
-		return CryptoWriteStream(file_path, password, salt=salt, allow_overwrite=allow_overwrite, append=append)
+	if password or key:
+		return CryptoWriteStream(file_path, password, salt=salt, allow_overwrite=allow_overwrite, append=append, key=key, key_password=key_password)
 	return codecs.open(file_path, mode, encoding="utf-8")
 
-def text_dump(file_path, text, allow_overwrite=True, append=False, password=None, salt=""):
+def text_dump(file_path, text, allow_overwrite=True, append=False, password=None, salt="", key=None, key_password=None):
 	"""
 	Opens a file for writing in UTF-8, writes text and closes the file
 	:rtype: file
@@ -175,7 +175,7 @@ def text_dump(file_path, text, allow_overwrite=True, append=False, password=None
 	:type file_path: string
 	:return: A file opened for writing
 	"""
-	f = open_write(file_path, allow_overwrite=allow_overwrite, append=append, password=password, salt=salt)
+	f = open_write(file_path, allow_overwrite=allow_overwrite, append=append, password=password, salt=salt, key=key, key_password=key_password)
 	f.write(text)
 	f.close()
 

@@ -1,5 +1,6 @@
 #encoding: utf-8
 from mikatools import *
+from mikatools import crypto
 import random
 
 """
@@ -34,9 +35,31 @@ for x in i:
 	print("line read:")
 	print(x)
 """
-
+"""
 secret_data = {"Росси́я":"العربية"}
-#json_dump(secret_data, "secret.json", password="secret", salt="very")
-#print(json_load("secret.json", password="secret", salt="very"))
+json_dump(secret_data, "secret.json", password="secret", salt="very")
+print(json_load("secret.json", password="secret", salt="very"))
 pickle_dump(secret_data, "secret.bin", password="secret", salt="very")
 print(pickle_load("secret.bin", password="secret", salt="very"))
+
+
+text = "salainen viestini\nsala_sala"
+private, public = crypto.generate_keys()
+o = open_write("secret.txt", key=public)
+o.write(text)
+o.write(text)
+o.close()
+
+
+i = open_read("secret.txt", key=private)
+for x in i:
+	print("line read:")
+	print(x)
+
+"""
+private, public = crypto.generate_keys()
+secret_data = {"Росси́я":"العربية"}
+json_dump(secret_data, "secret.json", key=public)
+print(json_load("secret.json", key=private))
+pickle_dump(secret_data, "secret.bin", key=public)
+print(pickle_load("secret.bin", key=private))

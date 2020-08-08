@@ -51,7 +51,7 @@ def load_key(key, key_password):
         raise Exception("Could not determine the key type (private/public)")
     return p_key
 
-def save_key(key, path, password=None):
+def save_key(key, path, key_password=None):
     try:
         if password:
             enc = serialization.BestAvailableEncryption(password.encode())

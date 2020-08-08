@@ -8,6 +8,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives.asymmetric import rsa
 from pathlib import Path
 from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import serialization
 
 def generate_keys():
     private_key = rsa.generate_private_key(
@@ -30,37 +31,39 @@ def symmetric_crypto(password, salt):
     key = base64.urlsafe_b64encode(kdf.derive(password))
     return Fernet(key)
 
-def load_key(key, key_password):
+def load_key(key, key_password=None):
+    if key_password:
+        key_password = key_password.encode()
     if isinstance(key, str) and key.startswith("-----BEGIN"):
-        pass
+        key = key.encode()
     elif isinstance(key, str) or isinstance(key, Path):
         f = open(key, "rb")
         key = f.read()
         f.close()
     else:
         return key
-    if "PRIVATE" in key:
+    if b"PRIVATE" in key:
         p_key = serialization.load_pem_private_key(
-                key.encode(),
-                password=None,
+                key,
+                password=key_password,
                 backend=default_backend()
             )
-    elif "PUBLIC" in key:
-        p_key = serialization.load_pem_public_key(key.encode(), backend=default_backend())
+    elif b"PUBLIC" in key:
+        p_key = serialization.load_pem_public_key(key, backend=default_backend())
     else:
         raise Exception("Could not determine the key type (private/public)")
     return p_key
 
 def save_key(key, path, key_password=None):
     try:
-        if password:
-            enc = serialization.BestAvailableEncryption(password.encode())
+        if key_password:
+            enc = serialization.BestAvailableEncryption(key_password.encode())
         else:
             enc = serialization.NoEncryption()
-        private_key.private_bytes(encoding=serialization.Encoding.PEM, format=serialization.PrivateFormat.PKCS8,encryption_algorithm=enc)
+        pem = key.private_bytes(encoding=serialization.Encoding.PEM, format=serialization.PrivateFormat.PKCS8,encryption_algorithm=enc)
     except:
         pem = key.public_bytes(encoding=serialization.Encoding.PEM,format=serialization.PublicFormat.SubjectPublicKeyInfo)
-    with open(path, "rb") as writer:
+    with open(path, "wb") as writer:
         for l in pem.splitlines():
             writer.write(l)
             writer.write(b"\n")
@@ -93,9 +96,13 @@ class CryptoReadStream():
         for part in text.split("!"):
             if len(part) == 0:
                 continue
-            part = base64.urlsafe_b64decode(part)
-            p = self.f.decrypt(part, *self.crpyto_args)
-            decrypted_texts.append(p)
+            part_base = base64.urlsafe_b64decode(part)
+            p = self.f.decrypt(part_base, *self.crpyto_args)
+            if part[-1] == "\n":
+                n = b"\n"
+            else:
+                n = b""
+            decrypted_texts.append(p + n)
         return "".join([x.decode("utf-8") for x in decrypted_texts])
 
     def close(self):

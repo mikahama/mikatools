@@ -6,10 +6,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="mikatools",
-    version="0.0.8",
+    version="1.0.0",
     author="Mika Hämäläinen",
     author_email="mika.hamalainen@helsinki.fi",
-    description="Quick methods for every day Python programming",
+    description="Quick methods for everyday Python programming",
     long_description=long_description,
     install_requires=['requests', "clint", "cryptography"],
     long_description_content_type="text/markdown",
@@ -17,7 +17,6 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 2",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],

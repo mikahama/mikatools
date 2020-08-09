@@ -1,5 +1,7 @@
 # Mikatools
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3977549.svg)](https://doi.org/10.5281/zenodo.3977549)
+
 Mikatools provides fast and easy methods for common Python coding tasks.
 Some functionality:
  - [script_path()](https://github.com/mikahama/mikatools/wiki/Miscellaneous#script_pathjoin_filenone) gives the location of the current Python script
@@ -13,3 +15,16 @@ Some functionality:
 [Read the wiki for more](https://github.com/mikahama/mikatools/wiki)
 
 The library mostly provides functionality for my other libraries.
+
+Cite:
+
+    @software{mika_hamalainen_2020_3977549,
+      author       = {Mika Hämäläinen},
+      title        = {mikahama/mikatools 1.0.0},
+      month        = aug,
+      year         = 2020,
+      publisher    = {Zenodo},
+      version      = {1.0.0},
+      doi          = {10.5281/zenodo.3977549},
+      url          = {https://doi.org/10.5281/zenodo.3977549}
+    }

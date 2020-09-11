@@ -16,7 +16,7 @@ Some functionality:
 
 The library mostly provides functionality for my other libraries.
 
-Cite:
+# Cite:
 
     @software{mika_hamalainen_2020_3977549,
       author       = {Mika Hämäläinen},
@@ -28,3 +28,10 @@ Cite:
       doi          = {10.5281/zenodo.3977549},
       url          = {https://doi.org/10.5281/zenodo.3977549}
     }
+
+# Need for NLP solutions for your business?
+
+
+<img src="https://rootroo.com/cropped-logo-01-png/" alt="Rootroo logo" width="128px" height="128px">
+
+My company, [Rootroo offers consulting related to multilingual NLP tasks](https://rootroo.com/). We have a strong academic background in the state-of-the-art AI solutions for every NLP need. Just contact us, we won't bite.

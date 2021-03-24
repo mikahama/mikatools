@@ -12,6 +12,7 @@ import os.path
 from multiprocessing import Process
 from multiprocessing import JoinableQueue
 from .crypto import CryptoReadStream, CryptoWriteStream, base64
+import warnings
 
 try:
     # For Python 3.0 and later
@@ -119,7 +120,7 @@ def json_dump(data, file_path, sort_keys=True,  allow_overwrite=True, append=Fal
 	with open_write(file_path, password=password, salt=salt, allow_overwrite=allow_overwrite, append=append, key = key,key_password=key_password) as file_handle:
 		json.dump(data, file_handle ,indent=4, sort_keys=sort_keys, ensure_ascii=False)
 
-def json_load(file_path, default_dictionary=None, password=None, salt ="", key=None, key_password=None):
+def json_load(file_path, default_dictionary=None, password=None, salt ="", key=None, key_password=None, line_by_line=False):
 	"""
 	Loads an UTF-8 encoded JSON
 	:param file_path: Path to the JSON file
@@ -134,6 +135,14 @@ def json_load(file_path, default_dictionary=None, password=None, salt ="", key=N
 				return json.load(file_handle)
 			except:
 				return default_dictionary
+		elif line_by_line:
+			res = []
+			for i, l in enumerate(file_handle):
+				try:
+					res.append(json.loads(l))
+				except Exception as e:
+					warnings.warn("Line " +str(i + 1) + ": " + str(e) , ResourceWarning)
+			return res
 		else:
 			return json.load(file_handle)
 

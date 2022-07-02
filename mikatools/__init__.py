@@ -1,6 +1,6 @@
 #encoding: utf-8
 import json, codecs, pickle, requests, os, sys
-from clint.textui import progress
+from tqdm import tqdm
 try:
 	#python 3
 	from queue import Queue
@@ -231,7 +231,7 @@ def __download_file_with_bar(url, path):
 		return
 	with open(path, 'wb') as f:
 		total_length = int(leng)
-		for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1): 
+		for chunk in tqdm(r.iter_content(chunk_size=1024), total=(total_length/1024) + 1): 
 			if chunk:
 				f.write(chunk)
 				f.flush()

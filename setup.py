@@ -6,12 +6,12 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="mikatools",
-    version="1.0.0",
+    version="1.0.1",
     author="Mika Hämäläinen",
     author_email="mika.hamalainen@helsinki.fi",
     description="Quick methods for everyday Python programming",
     long_description=long_description,
-    install_requires=['requests', "clint", "cryptography"],
+    install_requires=['requests', "tqdm", "cryptography"],
     long_description_content_type="text/markdown",
     url="https://github.com/mikahama/mikatools",
     packages=setuptools.find_packages(),

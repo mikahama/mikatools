@@ -56,10 +56,13 @@ for x in i:
 	print("line read:")
 	print(x)
 
-"""
 private, public = crypto.generate_keys()
 secret_data = {"Росси́я":"العربية"}
 json_dump(secret_data, "secret.json", key=public)
 print(json_load("secret.json", key=private))
 pickle_dump(secret_data, "secret.bin", key=public)
 print(pickle_load("secret.bin", key=private))
+
+"""
+
+download_file("https://github.com/mikahama/natas/blob/master/natas/models/normalization.pt?raw=true", "norm.pt", show_progress=True)

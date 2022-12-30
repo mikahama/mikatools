@@ -64,5 +64,10 @@ pickle_dump(secret_data, "secret.bin", key=public)
 print(pickle_load("secret.bin", key=private))
 
 """
+from mikatools import countries
 
-download_file("https://github.com/mikahama/natas/blob/master/natas/models/normalization.pt?raw=true", "norm.pt", show_progress=True)
+print(countries.supported_languages())
+print(countries.supported_countries())
+print(countries.iso_to_country("es", "fi"))
+
+#download_file("https://github.com/mikahama/natas/blob/master/natas/models/normalization.pt?raw=true", "norm.pt", show_progress=True)

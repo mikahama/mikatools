@@ -8,7 +8,7 @@ setuptools.setup(
     name="mikatools",
     version="1.0.1",
     author="Mika Hämäläinen",
-    author_email="mika.hamalainen@helsinki.fi",
+    author_email="mika@rootroo.com",
     description="Quick methods for everyday Python programming",
     long_description=long_description,
     install_requires=['requests', "tqdm", "cryptography"],

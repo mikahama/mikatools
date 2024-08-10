@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="mikatools",
-    version="1.0.1",
+    version="1.0.2",
     author="Mika Hämäläinen",
     author_email="mika@rootroo.com",
     description="Quick methods for everyday Python programming",
